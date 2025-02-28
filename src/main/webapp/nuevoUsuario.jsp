@@ -16,6 +16,7 @@
 </head>
 <body>
     <div class="container mt-5">
+        <jsp:include page="menu.jsp" />
         <h2 class="text-center">Registrar Nuevo Usuario</h2>
 
         <form action="UsuarioServlet" method="post" class="border p-4 rounded shadow-sm">
@@ -33,7 +34,7 @@
         </form>
 
         <br>
-        <a href="UsuarioServlet" class="btn btn-link">Volver a la Lista de Usuarios</a>
+        <a href="UsuarioServlet" class="btn btn-secondary">Volver a la Lista de Usuarios</a>
     </div>
 
     <!-- Incluir jQuery y Bootstrap JS -->

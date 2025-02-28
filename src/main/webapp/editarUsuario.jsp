@@ -17,6 +17,7 @@
 </head>
 <body>
     <div class="container mt-5">
+        <jsp:include page="menu.jsp" />
         <h2 class="text-center">Editar Usuario</h2>
 
         <%
@@ -41,7 +42,7 @@
         </form>
 
         <br>
-        <a href="UsuarioServlet" class="btn btn-link">Volver a la Lista de Usuarios</a>
+        <a href="UsuarioServlet" class="btn btn-secondary">Volver a la Lista de Usuarios</a>
     </div>
 
     <!-- Incluir jQuery y Bootstrap JS -->

@@ -10,6 +10,7 @@
     <body>
 
         <div class="container mt-5">
+            <jsp:include page="menu.jsp" />
             <h2>Lista de Usuarios</h2>
 
             <!-- Formulario de búsqueda por email -->
@@ -48,8 +49,8 @@
                 <% }%>
             </table>
 
-            <a href="index.jsp">Volver al Inicio</a>
-            <a href="nuevoUsuario.jsp">Agregar Nuevo Usuario</a>
+            <a href="index.jsp" class="btn btn-secondary">Volver al Inicio</a>
+            <a href="nuevoUsuario.jsp" class="btn btn-secondary">Agregar Nuevo Usuario</a>
         </div>
         <!-- Incluir jQuery y Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
