@@ -1,15 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cl.disma.cl.emedpro.controller;
-
-
 
 import cl.disma.cl.emedpro.Conexion;
 import cl.disma.cl.emedpro.dao.UsuarioDAO;
 import cl.disma.cl.emedpro.model.Usuario;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +23,7 @@ public class UsuarioServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        String emailBusqueda = request.getParameter("emailBusqueda"); // Obtenemos el parámetro de búsqueda
+        String emailBusqueda = request.getParameter("emailBusqueda");
 
         if ("editar".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -40,16 +33,14 @@ public class UsuarioServlet extends HttpServlet {
         } else if ("eliminar".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             eliminarUsuario(id);
-            response.sendRedirect("UsuarioServlet");  // Redirige para que se recargue la lista
+            response.sendRedirect("UsuarioServlet");
         } else {
-            // Si hay una búsqueda por email
             List<Usuario> listaUsuarios;
             if (emailBusqueda != null && !emailBusqueda.isEmpty()) {
                 listaUsuarios = buscarUsuariosPorEmail(emailBusqueda);
             } else {
-                // Si no hay búsqueda, obtener todos los usuarios
                 UsuarioDAO usuarioDAO = new UsuarioDAO();
-                listaUsuarios = usuarioDAO.obtenerUsuarios();  // Se obtiene la lista completa
+                listaUsuarios = usuarioDAO.obtenerUsuarios();
             }
             request.setAttribute("listaUsuarios", listaUsuarios);
             request.getRequestDispatcher("listaUsuarios.jsp").forward(request, response);
@@ -64,21 +55,36 @@ public class UsuarioServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             String email = request.getParameter("email");
             String pass = request.getParameter("pass");
-
-            // Encriptar solo si se ingresa una nueva contraseña
             String passEncriptado = (pass == null || pass.isEmpty()) ? null : encriptarMD5(pass);
-
             actualizarUsuario(id, email, passEncriptado);
+            response.sendRedirect("UsuarioServlet");
+        } else if ("insertar".equals(action)) {
+            String email = request.getParameter("email");
+            String pass = request.getParameter("pass");
+            String passEncriptado = encriptarMD5(pass);
+            insertarUsuario(email, passEncriptado);
             response.sendRedirect("UsuarioServlet");
         }
     }
 
-    // Método para obtener un usuario por ID
+    private void insertarUsuario(String email, String pass) {
+        Connection con = Conexion.getConexion();
+        String sql = "INSERT INTO usuarios (email, pass) VALUES (?, ?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, pass);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cerrarConexion();
+        }
+    }
+
     private Usuario obtenerUsuarioPorId(int id) {
         Usuario usuario = null;
         Connection con = Conexion.getConexion();
         String sql = "SELECT * FROM usuarios WHERE id = ?";
-
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -90,15 +96,12 @@ public class UsuarioServlet extends HttpServlet {
         } finally {
             Conexion.cerrarConexion();
         }
-
         return usuario;
     }
 
-    // Método para eliminar un usuario
     private void eliminarUsuario(int id) {
         Connection con = Conexion.getConexion();
         String sql = "DELETE FROM usuarios WHERE id = ?";
-
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
@@ -109,19 +112,16 @@ public class UsuarioServlet extends HttpServlet {
         }
     }
 
-    // Método para buscar usuarios por email
     private List<Usuario> buscarUsuariosPorEmail(String emailBusqueda) {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        return usuarioDAO.buscarUsuariosPorEmail(emailBusqueda); // Llamamos al método en el DAO
+        return usuarioDAO.buscarUsuariosPorEmail(emailBusqueda);
     }
 
-    // Método para actualizar usuario
     private void actualizarUsuario(int id, String email, String pass) {
         Connection con = Conexion.getConexion();
         String sql = pass != null
                 ? "UPDATE usuarios SET email = ?, pass = ? WHERE id = ?"
                 : "UPDATE usuarios SET email = ? WHERE id = ?";
-
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             if (pass != null) {
@@ -138,7 +138,6 @@ public class UsuarioServlet extends HttpServlet {
         }
     }
 
-    // Método para encriptar con MD5
     private String encriptarMD5(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/eMedpro">
-    <Resource name="jdbc/Productos" auth="Container" type="javax.sql.DataSource"
-        maxTotal="15" maxIdle="3" maxWaitMillis="5000"
-        username="tecadmin" password="NSloteria2015"
-        driverClassName="com.mysql.cj.jdbc.Driver"
-        url="jdbc:mysql://186.64.123.171:3306/Rodalin?serverTimezone=UTC"/>
+  <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" maxIdle="3" maxTotal="15" maxWaitMillis="5000" name="jdbc/Productos" password="NSloteria2015" type="javax.sql.DataSource" url="jdbc:mysql://186.64.123.171:3306/Rodalin?serverTimezone=UTC" username="tecadmin"/>
 </Context>
