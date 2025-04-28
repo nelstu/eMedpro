@@ -15,7 +15,10 @@
                             <a class="nav-link" href="#">Inicio <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="ReservaServle">Reserva Hora</a>
+                            <a class="nav-link" href="ReservaServlet">Reserva Hora</a>
+                        </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="AccesoMedicoServlet"> Acceso Medico</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="BloquesServlet">Bloques Medicos</a>

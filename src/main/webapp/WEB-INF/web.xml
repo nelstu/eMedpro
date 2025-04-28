@@ -14,6 +14,14 @@
         <servlet-name>BloquesServlet</servlet-name>
         <servlet-class>cl.disma.cl.emedpro.controller.BloquesServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ReservaServlet</servlet-name>
+        <servlet-class>cl.disma.cl.emedpro.controller.ReservaServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccesoMedicoServlet</servlet-name>
+        <servlet-class>cl.disma.cl.emedpro.controller.AccesoMedicoServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ControladorServlet</servlet-name>
         <url-pattern>/ControladorServlet</url-pattern>
@@ -21,6 +29,14 @@
     <servlet-mapping>
         <servlet-name>BloquesServlet</servlet-name>
         <url-pattern>/BloquesServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReservaServlet</servlet-name>
+        <url-pattern>/ReservaServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccesoMedicoServlet</servlet-name>
+        <url-pattern>/AccesoMedicoServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

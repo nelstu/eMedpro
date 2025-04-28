@@ -90,7 +90,11 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         } else if ("eliminar".equals(action)) {
             eliminarBloque(Integer.parseInt(request.getParameter("id")));
             doGet(request, response); // Redirigir después de eliminar
-        } else {
+        }else if ("procesar".equals(action)) {
+            procesarBloque(Integer.parseInt(request.getParameter("id")));
+            doGet(request, response); // Redirigir después de eliminar
+        } 
+        else {
             doGet(request, response);
         }
 }
@@ -218,5 +222,79 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             e.printStackTrace();
         }
     }
+    
+ private void procesarBloque(int idBloque) {
+    String bloqueSql = "SELECT b.id, b.idmedico, m.nombres, b.desde, b.hasta, b.hora_inicial, b.hora_final, b.intervalo " +
+                       "FROM emedpro_bloques b JOIN emedpro_medicos m ON b.idmedico = m.id WHERE b.id = ?";
+
+    String insertReservaSql = "INSERT INTO emedpro_reservas (title, start, end) VALUES (?, ?, ?)";
+
+    try (Connection conn = Conexion.getConexion();
+         PreparedStatement bloqueStmt = conn.prepareStatement(bloqueSql);
+         PreparedStatement insertStmt = conn.prepareStatement(insertReservaSql)) {
+
+        bloqueStmt.setInt(1, idBloque);
+        ResultSet rs = bloqueStmt.executeQuery();
+
+        if (rs.next()) {
+            int idMedico = rs.getInt("idmedico");
+            String nombreMedico = rs.getString("nombres");
+            Date desde = rs.getDate("desde");
+            Date hasta = rs.getDate("hasta");
+            Time horaInicial = rs.getTime("hora_inicial");
+            Time horaFinal = rs.getTime("hora_final");
+            int intervalo = rs.getInt("intervalo");
+
+            // Recorrer cada día
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(desde);
+
+            java.util.Calendar hastaCalendar = java.util.Calendar.getInstance();
+            hastaCalendar.setTime(hasta);
+
+            while (!calendar.after(hastaCalendar)) {
+                Date diaActual = new Date(calendar.getTimeInMillis());
+
+                // Construir horarios dentro del día
+                java.util.Calendar horaIni = java.util.Calendar.getInstance();
+                horaIni.setTime(horaInicial);
+
+                java.util.Calendar horaFin = java.util.Calendar.getInstance();
+                horaFin.setTime(horaFinal);
+
+                java.util.Calendar horaActual = (java.util.Calendar) horaIni.clone();
+
+                while (!horaActual.after(horaFin)) {
+                    java.util.Calendar horaSiguiente = (java.util.Calendar) horaActual.clone();
+                    horaSiguiente.add(java.util.Calendar.MINUTE, intervalo);
+
+                    if (!horaSiguiente.after(horaFin)) {
+                        // Crear start y end en tipo DATETIME
+                        Timestamp start = Timestamp.valueOf(diaActual.toString() + " " +
+                                String.format("%02d:%02d:00", horaActual.get(java.util.Calendar.HOUR_OF_DAY), horaActual.get(java.util.Calendar.MINUTE)));
+
+                        Timestamp end = Timestamp.valueOf(diaActual.toString() + " " +
+                                String.format("%02d:%02d:00", horaSiguiente.get(java.util.Calendar.HOUR_OF_DAY), horaSiguiente.get(java.util.Calendar.MINUTE)));
+
+                        // Insertar la reserva
+                        insertStmt.setString(1, nombreMedico);
+                        insertStmt.setTimestamp(2, start);
+                        insertStmt.setTimestamp(3, end);
+                        insertStmt.executeUpdate();
+                    }
+
+                    horaActual.add(java.util.Calendar.MINUTE, intervalo);
+                }
+
+                calendar.add(java.util.Calendar.DAY_OF_MONTH, 1); // siguiente día
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+    
 
 }

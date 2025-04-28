@@ -119,7 +119,8 @@
                             <form action="BloquesServlet" method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="eliminar">
                                 <input type="hidden" name="id" value="<%= bloque.getId()%>">
-                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                <button type="submit" name="action" value="eliminar" class="btn btn-danger btn-sm">Eliminar</button>
+                                <button type="submit" name="action" value="procesar" class="btn btn-primary btn-sm">Procesar...</button>
                             </form>
                         </td>
                     </tr>
